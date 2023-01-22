@@ -11,6 +11,6 @@ public:
 	static const FString GuidQueryParamName;
 	static const FString OpenJumpTargetQueryParamName;
 
-	static FString GetFocusUrlForNode(FName Package, FGuid NodeGuid);
-	static FString GetOpenJumpTargetUrlForNode(FName Package, FGuid NodeGuid);
+	static FString GetFocusUrlForNode(FName Package, const FGuid& NodeGuid);
+	static FString GetOpenJumpTargetUrlForNode(FName Package, const FGuid& NodeGuid);
 };

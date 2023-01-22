@@ -2,13 +2,14 @@
 
 #include "RedHermesBlueprintNodeEndpoint.h"
 
-#include "EdGraph/EdGraph.h"
 #include "EdGraphNode_Comment.h"
 #include "Editor.h"
 #include "K2Node.h"
-#include "Kismet2/KismetEditorUtilities.h"
 #include "RedHermesGraphNodeEndpoint.h"
 #include "RedHermesGraphNodeEndpointEditorExtension.h"
+#include "EdGraph/EdGraph.h"
+#include "Kismet2/KismetEditorUtilities.h"
+#include "Modules/ModuleManager.h"
 
 #define LOCTEXT_NAMESPACE "FRedHermesBlueprintNodeEndpointModule"
 
@@ -52,9 +53,9 @@ void FRedHermesBlueprintNodeEndpointModule::ShutdownModule()
 	}
 }
 
-const UEdGraphNode* FRedHermesBlueprintNodeEndpointModule::GetNodeInAsset(FGuid NodeGuid, const UObject* Asset)
+const UEdGraphNode* FRedHermesBlueprintNodeEndpointModule::GetNodeInAsset(const FGuid& NodeGuid, const UObject* Asset)
 {
-	if (const auto BlueprintObj = Cast<UBlueprint>(Asset))
+	if (const auto* BlueprintObj = Cast<UBlueprint>(Asset))
 	{
 		TArray<UEdGraph*> Graphs;
 		BlueprintObj->GetAllGraphs(Graphs);
@@ -85,7 +86,7 @@ void FRedHermesBlueprintNodeEndpointModule::HandleRequest(FGuid NodeGuid, UObjec
 
 void FRedHermesBlueprintNodeEndpointModule::ProvideNodeExtensionHook(const UEdGraphNode* Node, const UEdGraph* /*Graph*/, TSet<FName>& ExtensionHooks)
 {
-	if (Node->IsA<UK2Node>() || Node->IsA<UEdGraphNode_Comment>())
+	if (IsValid(Node) && (Node->IsA<UK2Node>() || Node->IsA<UEdGraphNode_Comment>()))
 	{
 		ExtensionHooks.Emplace(FName(TEXT("EdGraphSchemaNodeActions")));
 	}

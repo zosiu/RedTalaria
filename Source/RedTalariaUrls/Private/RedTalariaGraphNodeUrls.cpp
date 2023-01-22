@@ -9,7 +9,7 @@ const FName FRedTalariaGraphNodeUrls::HermesEndpointId = TEXT("graph_node");
 const FString FRedTalariaGraphNodeUrls::GuidQueryParamName = TEXT("guid");
 const FString FRedTalariaGraphNodeUrls::OpenJumpTargetQueryParamName = TEXT("open_jump_target");
 
-FString FRedTalariaGraphNodeUrls::GetFocusUrlForNode(FName Package, FGuid NodeGuid)
+FString FRedTalariaGraphNodeUrls::GetFocusUrlForNode(FName Package, const FGuid& NodeGuid)
 {
 	if (const auto Hermes = FModuleManager::LoadModulePtr<IHermesServerModule>(TEXT("HermesServer")))
 	{
@@ -22,7 +22,7 @@ FString FRedTalariaGraphNodeUrls::GetFocusUrlForNode(FName Package, FGuid NodeGu
 	return FString(TEXT(""));
 }
 
-FString FRedTalariaGraphNodeUrls::GetOpenJumpTargetUrlForNode(FName Package, FGuid NodeGuid)
+FString FRedTalariaGraphNodeUrls::GetOpenJumpTargetUrlForNode(FName Package, const FGuid& NodeGuid)
 {
 	const FString NodeUrl = GetFocusUrlForNode(Package, NodeGuid);
 	if (!NodeUrl.IsEmpty())

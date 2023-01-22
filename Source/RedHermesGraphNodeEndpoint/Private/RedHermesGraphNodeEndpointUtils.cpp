@@ -2,11 +2,11 @@
 
 #include "RedHermesGraphNodeEndpointUtils.h"
 
+#include "RedTalariaGraphNodeUrls.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetRegistry/IAssetRegistry.h"
 #include "EdGraph/EdGraph.h"
 #include "EdGraph/EdGraphNode.h"
-#include "RedTalariaGraphNodeUrls.h"
 
 UObject* FRedHermesGraphNodeEndpointUtils::GetGraphOwnerAsset(const UEdGraph* Graph)
 {
@@ -67,13 +67,39 @@ UObject* FRedHermesGraphNodeEndpointUtils::GetGraphOwnerAsset(const UEdGraph* Gr
 	return SameNameAsset;
 }
 
-FString FRedHermesGraphNodeEndpointUtils::GetFocusUrlForNodeInGraph(const UEdGraphNode* Node, const UEdGraph* Graph)
+FString FRedHermesGraphNodeEndpointUtils::GetFocusUrlForGuidInGraph(const FGuid& Guid, const UEdGraph* Graph)
 {
-	if (IsValid(Node) && IsValid(Graph))
+	if (IsValid(Graph))
 	{
 		if (const UObject* Asset = GetGraphOwnerAsset(Graph))
 		{
-			return FRedTalariaGraphNodeUrls::GetFocusUrlForNode(Asset->GetOutermost()->GetFName(), Node->NodeGuid);
+			return FRedTalariaGraphNodeUrls::GetFocusUrlForNode(Asset->GetOutermost()->GetFName(), Guid);
+		}
+	}
+
+	return FString();
+}
+
+FString FRedHermesGraphNodeEndpointUtils::GetFocusUrlForNodeInGraph(const UEdGraphNode* Node, const UEdGraph* Graph)
+{
+	if (IsValid(Node))
+	{
+		return GetFocusUrlForGuidInGraph(Node->NodeGuid, Graph);
+	}
+
+	return FString();
+}
+
+FString FRedHermesGraphNodeEndpointUtils::GetOpenJumpTargetUrlForGuidAndNodeInGraph(const FGuid& Guid, const UEdGraphNode* Node, const UEdGraph* Graph)
+{
+	if (IsValid(Node) && IsValid(Graph))
+	{
+		if (Node->GetJumpTargetForDoubleClick() != nullptr)
+		{
+			if (const UObject* Asset = GetGraphOwnerAsset(Graph))
+			{
+				return FRedTalariaGraphNodeUrls::GetOpenJumpTargetUrlForNode(Asset->GetOutermost()->GetFName(), Guid);
+			}
 		}
 	}
 
@@ -82,15 +108,9 @@ FString FRedHermesGraphNodeEndpointUtils::GetFocusUrlForNodeInGraph(const UEdGra
 
 FString FRedHermesGraphNodeEndpointUtils::GetOpenJumpTargetUrlForNodeInGraph(const UEdGraphNode* Node, const UEdGraph* Graph)
 {
-	if (IsValid(Node) && IsValid(Graph))
+	if (IsValid(Node))
 	{
-		if (Node->GetJumpTargetForDoubleClick() != nullptr)
-		{
-			if (const UObject* Asset = GetGraphOwnerAsset(Graph))
-			{
-				return FRedTalariaGraphNodeUrls::GetOpenJumpTargetUrlForNode(Asset->GetOutermost()->GetFName(), Node->NodeGuid);
-			}
-		}
+		return GetOpenJumpTargetUrlForGuidAndNodeInGraph(Node->NodeGuid, Node, Graph);
 	}
 
 	return FString();
